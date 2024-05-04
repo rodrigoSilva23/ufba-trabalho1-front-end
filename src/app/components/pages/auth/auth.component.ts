@@ -43,6 +43,7 @@ export class AuthComponent {
     this.authService
       .signIn(this.loginForm.value.email, this.loginForm.value.password)
       .subscribe({
+      
         error: (value) => {
 
           this.toastr.error('Login ou senha inválidos');

@@ -10,9 +10,5 @@ import { AuthService } from '../../../services/auth/auth.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  constructor(private authService: AuthService) { }
-
-  signOut() {
-      this.authService.signOut();
-  }
+ 
 }
