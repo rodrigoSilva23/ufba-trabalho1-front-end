@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { LayoutComponent } from '../layout/layout.component';
+import { AuthService } from '../../../services/auth/auth.service';
+
 
 @Component({
   selector: 'app-home',
@@ -9,5 +10,9 @@ import { LayoutComponent } from '../layout/layout.component';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+  constructor(private authService: AuthService) { }
 
+  signOut() {
+      this.authService.signOut();
+  }
 }

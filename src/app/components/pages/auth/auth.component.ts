@@ -6,9 +6,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { LoginService } from '../../../services/login.service';
+
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth/auth.service';
 
 interface LoginForm {
   email: FormControl;
@@ -18,14 +19,14 @@ interface LoginForm {
   selector: 'app-login',
   standalone: true,
   imports: [NgOptimizedImage, ReactiveFormsModule],
-  providers: [LoginService],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  providers: [AuthService],
+  templateUrl: './auth.component.html',
+  styleUrl: './auth.component.scss',
 })
-export class LoginComponent {
+export class AuthComponent {
   loginForm!: FormGroup<LoginForm>;
   constructor(
-    private loginService: LoginService,
+    private authService: AuthService,
     private toastr: ToastrService,
     private router: Router
   ) {
@@ -39,15 +40,9 @@ export class LoginComponent {
   }
 
   submitForm() {
-    this.loginService
-      .login(this.loginForm.value.email, this.loginForm.value.password)
+    this.authService
+      .signIn(this.loginForm.value.email, this.loginForm.value.password)
       .subscribe({
-        next: (value) => {
-          console.log(value);
-          this.toastr.success('Login realizado com sucesso');
-          this.router.navigateByUrl('/home');
-
-        },
         error: (value) => {
 
           this.toastr.error('Login ou senha inválidos');
