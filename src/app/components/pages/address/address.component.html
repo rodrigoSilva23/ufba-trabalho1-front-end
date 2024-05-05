@@ -1,0 +1,45 @@
+<div class="container mt-4 ">
+  <div class="d-flex justify-content-between">
+    <h2>Endereços</h2>
+
+    <button type="submit" class="btn btn-success ml-5">Novo</button>
+  </div>
+
+  <hr />
+
+  <h2>Endereços Registrados</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>CEP</th>
+        <th>Estado</th>
+        <th>Cidade</th>
+        <th>Bairro</th>
+        <th>Ações</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let address of addresses$ | async">
+        <th>{{address.postalCode}}</th>
+        <th>{{address.state.name}}</th>
+        <th>{{address.city.name}}</th>
+        <th>{{address.street}}</th>
+        <th>
+          <div>
+            <button class="btn btn-info mx-1" >
+              Editar
+            </button>
+            <button  class="btn btn-danger">
+             Deletar
+            </button>
+        </div>
+      </th>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <ngb-pagination [collectionSize]="collectionSize" [(page)]="currentPage" [boundaryLinks]="true"  [pageSize]="pageSize" (pageChange)="onPageChange($event)"/>
+
+</div>

@@ -4,19 +4,31 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { AuthResponse } from '../../types/auth-response.type';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { jwtDecode } from 'jwt-decode';
 
+import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../../environments/environment';
+
+
+
+interface UserDetails {
+  id: number ;
+  name: string;
+  email: string;
+  role: string;
+
+}
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   public isAuth = new BehaviorSubject<boolean>(false);
   apiUrl: string = environment.apiUrl;
+
   constructor(private router: Router, private httpClient: HttpClient) {
    this.autoSignIn();
   }
   signIn(email: string, password: string): Observable<AuthResponse> {
+    console.log(this.apiUrl);
     return this.httpClient
       .post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password })
       .pipe(
@@ -46,13 +58,13 @@ export class AuthService {
     this.router.navigate(['/auth']);
   }
 
-  getUserDetail = () => {
+  getUserDetail = ():UserDetails | null  =>  {
     const token = this.getToken();
     if (!token) return null;
     const decodedToken: any = jwtDecode(token);
     const userDetail = {
       id: decodedToken.userId,
-      fullName: decodedToken.userName,
+      name: decodedToken.userName,
       email: decodedToken.sub,
       role: decodedToken.role,
     };
