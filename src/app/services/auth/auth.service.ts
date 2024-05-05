@@ -28,7 +28,6 @@ export class AuthService {
    this.autoSignIn();
   }
   signIn(email: string, password: string): Observable<AuthResponse> {
-    console.log(this.apiUrl);
     return this.httpClient
       .post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password })
       .pipe(

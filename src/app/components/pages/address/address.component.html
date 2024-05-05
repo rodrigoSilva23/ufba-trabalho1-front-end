@@ -1,10 +1,11 @@
-<div class="container mt-4 ">
+<div class="container mt-4">
   <div class="d-flex justify-content-between">
     <h2>Endereços</h2>
 
-    <button type="submit" class="btn btn-success ml-5">Novo</button>
+    <button type="b" class="btn btn-success ml-5" (click)="open(modalContent)">
+      Novo
+    </button>
   </div>
-
   <hr />
 
   <h2>Endereços Registrados</h2>
@@ -15,31 +16,185 @@
         <th>Estado</th>
         <th>Cidade</th>
         <th>Bairro</th>
+        <th>Principal</th>
         <th>Ações</th>
-
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let address of addresses$ | async">
-        <th>{{address.postalCode}}</th>
-        <th>{{address.state.name}}</th>
-        <th>{{address.city.name}}</th>
-        <th>{{address.street}}</th>
+        <th>{{ address.postalCode }}</th>
+        <th>{{ address.state.name }}</th>
+        <th>{{ address.city.name }}</th>
+        <th>{{ address.street }}</th>
+        <th class="ml-1">{{ address.isMainAddress ? "Sim" : "Não" }}</th>
         <th>
           <div>
-            <button class="btn btn-info mx-1" >
-              Editar
-            </button>
-            <button  class="btn btn-danger">
-             Deletar
-            </button>
-        </div>
-      </th>
-      </tr>
+            <button class="btn btn-info mx-1">Editar</button>
 
+            <button class="btn btn-danger">Deletar</button>
+          </div>
+        </th>
+      </tr>
     </tbody>
   </table>
 
-  <ngb-pagination [collectionSize]="collectionSize" [(page)]="currentPage" [boundaryLinks]="true"  [pageSize]="pageSize" (pageChange)="onPageChange($event)"/>
-
+  <ngb-pagination
+    [collectionSize]="collectionSize"
+    [(page)]="currentPage"
+    [boundaryLinks]="true"
+    [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)"
+  />
 </div>
+
+<ng-template #modalContent let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">{{ title }}</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="form" class="row needs-validation">
+      <div class="mb-3 col-3">
+        <label for="postalCode" class="form-label">CEP</label>
+        <input type="text" class="form-control" placeholder="12345678" />
+        <div class="text=danger">
+          <!-- <div *ngIf="addressForm.get('postalCode')?.errors?.required">
+              O CEP é obrigatório.
+            </div>
+            <div *ngIf="postalCode.errors.minlength">
+              O CEP deve ter no mínimo 8 caracteres.
+            </div>
+            <div *ngIf="postalCode.errors.maxlength">
+              O CEP deve ter no máximo 8 caracteres.
+            </div> -->
+        </div>
+      </div>
+      <div class="mb-3 col-4">
+        <label for="stateId" class="form-label">Estado</label>
+        <select class="form-select" aria-label="lista de estado"   id="stateId" (change)="handleChangeState($event)" formControlName="stateId">
+          <option selected ></option>
+          <option [value]="state.id" *ngFor="let state of dataStates$ | async">{{state.name}}</option>
+
+        </select>
+      </div>
+      <div class="mb-3 col-5">
+        <label for="cityId" class="form-label">Cidade</label>
+        <select class="form-select" aria-label="lista de estado"   id="cityId"  formControlName="cityId" >
+          <option selected ></option>
+          <option [value]="city.id" *ngFor="let city of dataCities$ | async">{{city.name}}</option>
+
+        </select>
+      </div>
+      <div class="mb-3 col-9">
+        <label for="street" class="form-label">Rua</label>
+        <input
+          type="text"
+          class="form-control"
+          id="street"
+          formControlName="street"
+          placeholder="Main Street 23"
+        />
+      </div>
+      <div class="mb-3 col-3">
+        <label for="locationType" class="form-label">Tipo de Residencia</label>
+        <input
+          type="text"
+          class="form-control"
+          id="locationType"
+          formControlName="locationType"
+          placeholder="Residencial"
+        />
+      </div>
+      <div class="mb-3 col">
+        <label for="location" class="form-label">Local</label>
+        <input
+          type="text"
+          class="form-control"
+          id="location"
+          formControlName="location"
+          placeholder="Building A"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="neighborhood" class="form-label">Bairro</label>
+        <input
+          type="text"
+          class="form-control"
+          id="neighborhood"
+          formControlName="neighborhood"
+          placeholder="Downtown"
+        />
+      </div>
+
+      <div class="mb-3 col-4">
+        <label for="number" class="form-label">Número</label>
+        <input
+          type="text"
+          class="form-control"
+          id="number"
+          formControlName="number"
+          placeholder="123"
+        />
+      </div>
+      <div class="mb-3 col-4">
+        <label for="block" class="form-label">Bloco</label>
+        <input
+          type="text"
+          class="form-control"
+          id="block"
+          formControlName="block"
+          placeholder="A"
+        />
+      </div>
+      <div class="mb-3 col-4">
+        <label for="lot" class="form-label">Lote</label>
+        <input
+          type="text"
+          class="form-control"
+          id="lot"
+          formControlName="lot"
+          placeholder="1"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="complement" class="form-label">Complemento</label>
+        <input
+          type="text"
+          class="form-control"
+          id="complement"
+          formControlName="complement"
+          placeholder="Apt 101"
+        />
+      </div>
+
+      <div class="mb-3 m form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="isMainAddress"
+          formControlName="isMainAddress"
+        />
+        <label class="form-check-label" for="isMainAddress"
+          >Endereço Principal</label
+        >
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-success" (click)="onSubmit(modal)">
+      Save
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.dismiss()"
+    >
+      Cancelar
+    </button>
+  </div>
+</ng-template>
