@@ -30,6 +30,12 @@ export class AddressService {
     );
   }
 
+  getAddressById(id: number ) {
+    return this.httpClient.get<AddressResponse>(
+      `${this.apiUrl}/user/${this.userId}/address/${id}`
+    );
+  }
+
   deleteAddressByUser(addressId: number) {
     return this.httpClient.delete(
       `${this.apiUrl}/user/${this.userId}/address/${addressId}`
@@ -42,8 +48,13 @@ export class AddressService {
   getAllCitieyByState(stateId: number) {
     return this.httpClient.get<StateResponse[]>(`${this.apiUrl}/address/citiesByState/`+stateId);
   }
-  createAddressByUser(address: AddressRequest) {
+  createAddressByUser(address: any) {
     return this.httpClient.post(
+      `${this.apiUrl}/user/${this.userId}/address`,address
+    );
+  }
+  putAddressByUser(address: any) {
+    return this.httpClient.put(
       `${this.apiUrl}/user/${this.userId}/address`,address
     );
   }

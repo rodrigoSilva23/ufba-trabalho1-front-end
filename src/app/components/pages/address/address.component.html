@@ -29,9 +29,9 @@
         <th class="ml-1">{{ address.isMainAddress ? "Sim" : "Não" }}</th>
         <th>
           <div>
-            <button class="btn btn-info mx-1">Editar</button>
+            <button class="btn btn-info mx-1" (click)="onEdit(modalContent,address)">Editar</button>
 
-            <button class="btn btn-danger">Deletar</button>
+            <button class="btn btn-danger"(click)="onDelete(address)">Deletar</button>
           </div>
         </th>
       </tr>
@@ -59,35 +59,62 @@
   </div>
   <div class="modal-body">
     <form [formGroup]="form" class="row needs-validation">
+      <input
+      type="hidden"
+      formControlName="id"
+    />
       <div class="mb-3 col-3">
         <label for="postalCode" class="form-label">CEP</label>
-        <input type="text" class="form-control" placeholder="12345678" />
-        <div class="text=danger">
-          <!-- <div *ngIf="addressForm.get('postalCode')?.errors?.required">
-              O CEP é obrigatório.
-            </div>
-            <div *ngIf="postalCode.errors.minlength">
-              O CEP deve ter no mínimo 8 caracteres.
-            </div>
-            <div *ngIf="postalCode.errors.maxlength">
-              O CEP deve ter no máximo 8 caracteres.
-            </div> -->
+        <input
+          type="number"
+          class="form-control"
+          placeholder="12345678"
+          formControlName="postalCode"
+        />
+        <div
+          class="text=danger"
+          *ngIf="
+            form.controls.postalCode.touched
+          "
+        >
+          <span *ngIf="form.controls.postalCode.errors!['required']">
+            O CEP é obrigatório.
+          </span>
+          <span *ngIf="form.controls.postalCode.errors!['minlength']">
+            O CEP deve ter no mínimo 8 caracteres.
+          </span>
+          <span *ngIf="form.controls.postalCode.errors!['maxlength']">
+            O CEP deve ter no máximo 8 caracteres.
+          </span>
         </div>
       </div>
       <div class="mb-3 col-4">
         <label for="stateId" class="form-label">Estado</label>
-        <select class="form-select" aria-label="lista de estado"   id="stateId" (change)="handleChangeState($event)" formControlName="stateId">
-          <option selected ></option>
-          <option [value]="state.id" *ngFor="let state of dataStates$ | async">{{state.name}}</option>
-
+        <select
+          class="form-select"
+          aria-label="lista de estado"
+          id="stateId"
+          (change)="handleChangeState($event)"
+          formControlName="stateId"
+        >
+          <option selected></option>
+          <option [value]="state.id" *ngFor="let state of dataStates$ | async">
+            {{ state.name }}
+          </option>
         </select>
       </div>
       <div class="mb-3 col-5">
         <label for="cityId" class="form-label">Cidade</label>
-        <select class="form-select" aria-label="lista de estado"   id="cityId"  formControlName="cityId" >
-          <option selected ></option>
-          <option [value]="city.id" *ngFor="let city of dataCities$ | async">{{city.name}}</option>
-
+        <select
+          class="form-select"
+          aria-label="lista de estado"
+          id="cityId"
+          formControlName="cityId"
+        >
+          <option selected></option>
+          <option [value]="city.id" *ngFor="let city of dataCities$ | async">
+            {{ city.name }}
+          </option>
         </select>
       </div>
       <div class="mb-3 col-9">
@@ -188,6 +215,36 @@
   <div class="modal-footer">
     <button type="submit" class="btn btn-success" (click)="onSubmit(modal)">
       Save
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.dismiss()"
+    >
+      Cancelar
+    </button>
+  </div>
+</ng-template>
+
+
+
+
+<ng-template #modalContentDelete let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Deletar Endereço</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <p>Tem certeza que deseja deletar o endereço?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-danger">
+      deletar
     </button>
     <button
       type="button"
