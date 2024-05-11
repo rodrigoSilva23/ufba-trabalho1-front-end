@@ -21,7 +21,7 @@ interface UserDetails {
   providedIn: 'root',
 })
 export class AuthService {
-  public isAuth = new BehaviorSubject<boolean>(false);
+
   apiUrl: string = environment.apiUrl;
 
   constructor(private router: Router, private httpClient: HttpClient) {
@@ -29,31 +29,24 @@ export class AuthService {
   }
   signIn(email: string, password: string): Observable<AuthResponse> {
     return this.httpClient
-      .post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password })
-      .pipe(
+      .post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
         tap((value) => {
           localStorage.setItem('auth-token', value.token);
-          this.isAuth.next(true);
           this.router.navigate(['home']);
-
-
-          return value;
         })
-      );
+      )
   }
 
   autoSignIn() {
     if (typeof localStorage !== 'undefined') {
       const hasToken = localStorage.getItem('auth-token');
       if (hasToken) {
-        this.isAuth.next(true);
         this.router.navigate(['/home']);
       }
     }
   }
   signOut() {
-    localStorage.removeItem('auth-token');
-    this.isAuth.next(false);
+    localStorage.clear();
     this.router.navigate(['/auth']);
   }
 
@@ -87,11 +80,18 @@ export class AuthService {
 
     private isTokenExpired() {
       const token = this.getToken();
+
       if (!token) return true;
+
       const decoded = jwtDecode(token);
-      const isTokenExpired = Date.now() >= decoded['exp']! * 1000;
-      if (isTokenExpired) this.signOut();
-      return isTokenExpired;
+      console.log(Date.now());
+      console.log(Date.now() <= (decoded['exp'] as number) * 1000);
+      console.log((decoded['exp'] as number) * 1000);
+
+      const isTokenExpired = Date.now() >= (decoded['exp'] as number) * 1000;
+      if (isTokenExpired)  this.signOut();
+      return !isTokenExpired;
     }
+
 }
 

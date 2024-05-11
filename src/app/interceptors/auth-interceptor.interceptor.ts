@@ -6,6 +6,8 @@ import { inject } from '@angular/core';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
 
+  /*const authService = inject(AuthService);
+    authService.isLoggedIn();*/
   const authToken = localStorage.getItem('auth-token');
   if (authToken) {
     const cloned = req.clone({
