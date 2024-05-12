@@ -1,5 +1,8 @@
 @import 'bootstrap/scss/bootstrap';
 @import  'ngx-toastr/toastr-bs5-alert';
+
+$color-primary: #1f293a;
+$color-secondary: #0ef;
 * {
   margin: 0;
   padding: 0;
@@ -9,6 +12,8 @@
 
 html, body {
   height: 100%;
+  background-color: $color-primary;
+  color: $color-secondary;
 }
 
 
