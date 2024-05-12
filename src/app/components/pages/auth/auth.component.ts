@@ -8,8 +8,14 @@ import {
 } from '@angular/forms';
 
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { InputBoxComponent } from '../../input-box/input-box.component';
 
 interface LoginForm {
   email: FormControl;
@@ -18,18 +24,21 @@ interface LoginForm {
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [NgOptimizedImage, ReactiveFormsModule],
+  imports: [
+    NgOptimizedImage,
+    ReactiveFormsModule,
+    RouterLink,
+    RouterOutlet,
+    RouterLinkActive,
+    InputBoxComponent,
+  ],
   providers: [AuthService],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
 })
 export class AuthComponent {
   loginForm!: FormGroup<LoginForm>;
-  constructor(
-    private authService: AuthService,
-    private toastr: ToastrService,
-    private router: Router
-  ) {
+  constructor(private authService: AuthService, private toastr: ToastrService) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
@@ -44,8 +53,14 @@ export class AuthComponent {
       .signIn(this.loginForm.value.email, this.loginForm.value.password)
       .subscribe({
         error: (value) => {
-
-          this.toastr.error('Login ou senha inválidos');
+          switch (value.error.message) {
+            case 'Bad credentials':
+              this.toastr.error('Login ou senha inválidos');
+              break;
+            case 'User is disabled':
+              this.toastr.error('Usuário inativo');
+              break;
+          }
         },
       });
   }
