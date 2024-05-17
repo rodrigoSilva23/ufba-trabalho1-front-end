@@ -20,7 +20,7 @@
           <a href="#">Esqueceu sua senha?</a>
         </div>
         <button type="submit" class="btn" [disabled]="loginForm.invalid">
-          Login
+          {{isLoading ? 'Logando...': 'Login'}}
         </button>
         <div class="signup-link">
           <p>Não Possui uma conta ainda? <a routerLink="/signup">Signup</a></p>

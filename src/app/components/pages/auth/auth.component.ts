@@ -38,6 +38,7 @@ interface LoginForm {
 })
 export class AuthComponent {
   loginForm!: FormGroup<LoginForm>;
+  protected isLoading = false;
   constructor(private authService: AuthService, private toastr: ToastrService) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -49,10 +50,12 @@ export class AuthComponent {
   }
 
   submitForm() {
+    this.isLoading = true;
     this.authService
       .signIn(this.loginForm.value.email, this.loginForm.value.password)
       .subscribe({
         error: (value) => {
+          this.isLoading = false;
           switch (value.error.message) {
             case 'Bad credentials':
               this.toastr.error('Login ou senha inválidos');
