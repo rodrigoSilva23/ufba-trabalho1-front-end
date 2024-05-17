@@ -37,6 +37,7 @@ import { InputBoxComponent } from '../../input-box/input-box.component';
 export class SignupComponent {
   submitted: boolean = false;
   hidePassword: boolean = true;
+  protected isLoading = false;
   constructor(
     private formBuilderService: NonNullableFormBuilder,
     private toastr: ToastrService,
@@ -69,6 +70,8 @@ export class SignupComponent {
       }
       return;
     }
+
+    this.isLoading = true;
     const dadosSignup :SignUpForm = this.signupForm.value;
     dadosSignup.role = 'USER';
     this.authService.signUp(dadosSignup).subscribe({
@@ -79,6 +82,7 @@ export class SignupComponent {
         this.signupForm.reset();
       },
       error: (value) => {
+        this.isLoading = false;
         if (value.status === 409) {
           this.toastr.error('Email ja existe');
           return;

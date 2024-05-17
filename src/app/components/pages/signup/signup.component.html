@@ -33,7 +33,7 @@
           [invalid]="signupForm.controls['confirmPassword'].invalid && submitted"
         />
 
-        <button type="submit" class="btn">Cadastrar</button>
+        <button type="submit" class="btn">{{isLoading ? 'Cadastrando...' : 'Cadastrar'}}</button>
         <div class="signup-link">
           <p>Voltar para tela de <a routerLink="/auth">login</a></p>
         </div>
