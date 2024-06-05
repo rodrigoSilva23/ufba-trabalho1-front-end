@@ -1,6 +1,6 @@
-import { Component, OnInit, TemplateRef, inject } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 
-import { Observable, map } from 'rxjs';
+import { Observable, map, of, switchMap, tap } from 'rxjs';
 import { AddressResponse } from '../../../types/address.response.type';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -8,14 +8,30 @@ import {
   AddressService,
   StateResponse,
 } from '../../../services/address/address.service';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { AddressRequest } from '../../../types/address.request.type';
+
+import { ViaCepService } from '../../../services/address/via-cep.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../../dialog/dialog.component';
+import { LoadingComponent } from '../../loading/loading.component';
+import { OnlyNumbersDirective } from '../../../directives/only-numbers/only-numbers.directive';
 
 @Component({
   selector: 'app-endereco',
   standalone: true,
-  imports: [CommonModule, NgbPaginationModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    NgbPaginationModule,
+    ReactiveFormsModule,
+    DialogComponent,
+    LoadingComponent,
+  ],
+  providers: [OnlyNumbersDirective],
   templateUrl: './address.component.html',
   styleUrl: './address.component.scss',
 })
@@ -24,17 +40,22 @@ export class AddressComponent implements OnInit {
   collectionSize = 1;
   pageSize = 5;
   addresses$ = new Observable<AddressResponse[]>();
+  type = 'create';
 
-  title: string = 'Novo Endereço';
   dataStates$ = new Observable<StateResponse[]>();
   dataCities$ = new Observable<StateResponse[]>();
   addressIdDelete: string = '';
   isDisabledCities: boolean = true;
+  isLoading: boolean = true;
+  isCityLoading = false;
+  isSubmit = false;
   constructor(
     private addressServe: AddressService,
-    private modalService: NgbModal,
     private toastr: ToastrService,
-    private formBuilderService: FormBuilder
+    private formBuilderService: NonNullableFormBuilder,
+    private viaCepService: ViaCepService,
+    public dialog: MatDialog,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -42,6 +63,7 @@ export class AddressComponent implements OnInit {
   }
 
   listAllAddressByUser() {
+    this.isLoading = true;
     this.addresses$ = this.addressServe
       .getAllAddressByUser(this.currentPage - 1, this.pageSize)
       .pipe(
@@ -50,6 +72,7 @@ export class AddressComponent implements OnInit {
           return pagination.content;
         })
       );
+    this.addresses$.subscribe(() => (this.isLoading = false));
   }
 
   onPageChange(page: number) {
@@ -71,16 +94,14 @@ export class AddressComponent implements OnInit {
     block: [''],
     lot: [''],
     complement: [''],
-    cityId: ['', Validators.required],
+    cityId: [''],
     stateId: ['', Validators.required],
     isMainAddress: [false, Validators.required],
   });
 
-
-
   onSubmit(modalRef: any) {
     const isFormValid = this.form.valid;
-
+    this.isSubmit = true;
     if (isFormValid) {
       const requestData = this.form.value;
       if (this.form.value.id) {
@@ -115,46 +136,51 @@ export class AddressComponent implements OnInit {
   open(content: TemplateRef<any>) {
     this.dataStates$ = this.addressServe.getAllState();
     this.isDisabledCities = true;
-    this.modalService.open(content, {
-      ariaLabelledBy: 'modal-title',
-      scrollable: true,
-      size: 'lg',
-    });
+    this.modalService
+      .open(content, {
+        ariaLabelledBy: 'modal-title',
+        scrollable: true,
+        size: 'lg',
+      })
+      .result.then(
+        (result) => {
+          this.form.reset();
+        },
+        (reason) => {
+          this.form.reset();
+        }
+      )
+      .catch((error) => {
+        this.form.reset();
+      });
   }
   handleChangeState(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    if (inputElement.value) {
-      this.dataCities$ = this.addressServe.getAllCitieyByState(
-        parseInt(inputElement.value)
-      );
-      this.isDisabledCities = false;
+    const inputElement = event.target as HTMLSelectElement;
+    const stateId = parseInt(inputElement.value);
+
+    if (stateId) {
+      this.isCityLoading = true;
+      this.dataCities$ = this.addressServe.getAllCitieyByState(stateId);
     }
   }
+
   onEdit(content: TemplateRef<any>, address: AddressResponse) {
+    this.type = 'edit';
     this.addressServe.getAddressById(address.id).subscribe({
       next: (value) => {
         this.dataCities$ = this.addressServe.getAllCitieyByState(
           value.state.id
         );
+
         this.form.patchValue({
-          id: value.id.toString(),
-          postalCode: value.postalCode,
-          street: value.street,
-          location: value.location,
-          locationType: value.locationType,
-          neighborhood: value.neighborhood,
-          number: value.number,
-          block: value.block,
-          lot: value.lot,
-          complement: value.complement,
+          ...value,
           cityId: value.city.id.toString(),
           stateId: value.state.id.toString(),
-          isMainAddress: value.isMainAddress,
+          id: value.id.toString(),
         });
       },
     });
 
-    this.title = 'Editar Endereço';
     this.open(content);
   }
 
@@ -169,6 +195,80 @@ export class AddressComponent implements OnInit {
         this.toastr.error('Error ao deletar o endereço');
       },
     });
+  }
 
+  getCep(event: Event) {
+    const inputValue = (event.target as HTMLInputElement).value;
+
+    this.viaCepService
+      .getCep(inputValue)
+      .pipe(
+        switchMap((valueCep) => {
+          return this.dataStates$.pipe(
+            switchMap((states) => {
+              this.form.patchValue({
+                street: valueCep.logradouro,
+                location: valueCep.localidade,
+                neighborhood: valueCep.bairro,
+              });
+              const matchingState = states.find(
+                (state) =>
+                  state.abbreviation.toLowerCase() === valueCep.uf.toLowerCase()
+              );
+
+              if (matchingState) {
+                this.form.patchValue({
+                  stateId: matchingState.id.toString(),
+                });
+                this.dataCities$ = this.addressServe.getAllCitieyByState(
+                  matchingState.id
+                );
+
+              }
+
+              return this.dataCities$;
+            })
+          );
+        })
+      )
+      .subscribe({
+        next: (valueCep) => {
+          console.log(valueCep);
+          this.dataCities$.subscribe((cities) => {
+            /*const matchingCity = cities.find(
+              (city) =>
+                city.name.toLowerCase() === valueCep?.localidade.toLowerCase()
+            );
+
+            if (matchingCity) {
+              // Verifique se o controle 'cityId' existe
+              if (this.form.controls['cityId']) {
+                this.form.controls['cityId'].setValue(
+                  matchingCity.id.toString()
+                );
+                console.log(matchingCity.id.toString());
+              }
+            }*/
+          });
+        },
+        error: (err) => {
+          console.error('Erro ao processar CEP:', err);
+        },
+      });
+  }
+  openDialog(address?: AddressResponse) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: {
+        title: 'Deletar',
+        content: 'Tem certeza que deseja deletar o endereço?',
+        type: 'Deletar',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((isConfirmed) => {
+      if (isConfirmed) {
+        this.onDelete(address!);
+      }
+    });
   }
 }

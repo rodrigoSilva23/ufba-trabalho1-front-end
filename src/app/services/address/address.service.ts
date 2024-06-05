@@ -5,6 +5,7 @@ import { AuthService } from '../auth/auth.service';
 import { AddressResponse } from '../../types/address.response.type';
 import { Pagination } from '../../types/pagination.type';
 import { AddressRequest } from '../../types/address.request.type';
+import { Observable } from 'rxjs';
 
 export interface StateResponse {
   id: number;
@@ -43,10 +44,10 @@ export class AddressService {
     );
   }
 
-  getAllState() {
+  getAllState(): Observable<StateResponse[]>{
     return this.httpClient.get<StateResponse[]>(`${this.apiUrl}/address/state`);
   }
-  getAllCitieyByState(stateId: number) {
+  getAllCitieyByState(stateId: number):Observable<StateResponse[]> {
     return this.httpClient.get<StateResponse[]>(`${this.apiUrl}/address/citiesByState/`+stateId);
   }
   createAddressByUser(address: any) {

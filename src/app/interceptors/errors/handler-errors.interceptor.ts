@@ -6,7 +6,7 @@ import { EMPTY, catchError, throwError } from 'rxjs';
 
 export const HandlerErrorsInterceptor: HttpInterceptorFn = (req, next) => {
   const toast = inject(ToastrService)
-  console.log(req)
+
   return next(req).pipe(
     catchError((err: any) => {
       if (err instanceof HttpErrorResponse) {

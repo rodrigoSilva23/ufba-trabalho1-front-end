@@ -76,7 +76,6 @@ export class SignupComponent {
     dadosSignup.role = 'USER';
     this.authService.signUp(dadosSignup).subscribe({
       next: (value) => {
-        console.log(value);
 
         this.toastr.success('Usário criado com sucesso');
         this.signupForm.reset();
