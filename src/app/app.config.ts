@@ -8,12 +8,13 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 import { authInterceptor } from './interceptors/auth-interceptor.interceptor';
 import { HandlerErrorsInterceptor } from './interceptors/errors/handler-errors.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideAnimations(),
     provideToastr(),
-    provideHttpClient(withFetch(),withInterceptors([authInterceptor,HandlerErrorsInterceptor])),
+    provideHttpClient(withFetch(),withInterceptors([authInterceptor,HandlerErrorsInterceptor])), provideAnimationsAsync(), provideAnimationsAsync(),
   ],
 };
