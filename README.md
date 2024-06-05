@@ -1,27 +1,76 @@
-# FrontProfectUfba
+Selecione a linguagem: **English**, [Portuguese](https://github.com/rodrigoSilva23/ufba-trabalho1-front-end/README-pt.md)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.6.
+# Address Listing Page
 
-## Development server
+This project aims to provide learning and practice with the Angular framework.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Features
 
-## Code scaffolding
+-  Create user
+-  Create, edit, and delete address
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+## Technologies Used
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+-   TypeScript
+-   Angular 17
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Prerequisites
 
-## Running end-to-end tests
+  Before you begin, make sure you have the following software installed:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+ #### Node.js:
+  - You can download and install Node.js from the  [official website](https://nodejs.org/en).
+  - Verify the installation by running node -v in the terminal. The recommended version is 18.x or higher.
 
-## Further help
+ #### npm (Node Package Manager):
+  - npm is automatically installed with Node.js. Verify the installation by running npm -v in the terminal..
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+ #### Angular CLI:
+  - Install Angular CLI globally by running npm install -g @angular/cli.
+  - Verify the installation by running ng version.
+ #### Git (opcional, mas recomendado):
+
+  - Git is a version control tool. You can download and install Git from the [official website](https://www.git-scm.com/downloads).
+  - Verify the installation by running git --version.
+
+<b>Make sure you have all the necessary dependencies installed before proceeding with the following steps.</b>
+
+## Installation Steps
+
+#### 1 - Clone the repository:
+
+```bash
+  https://github.com/rodrigoSilva23/ufba-trabalho1-front-end.git
+  cd ufba-trabalho1-front-end
+```
+#### 2 - Install project dependencies:
+
+```bash
+  npm install
+
+```
+
+
+#### 3 - Start the development server:
+
+```bash
+  ng serve
+```
+
+
+#### 4 - Access the application:
+
+```bash 
+  http://localhost:4200/
+```
+
+
+## Author
+
+-   [@rodrigosilvaDev23](https://github.com/rodrigoSilva23)
+
+## License
+
+The spring boot framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
