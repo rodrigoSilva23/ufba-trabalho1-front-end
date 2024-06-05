@@ -73,4 +73,4 @@ This project aims to provide learning and practice with the Angular framework.
 
 ## License
 
-The spring boot framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The Angular is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
