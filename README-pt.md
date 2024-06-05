@@ -42,7 +42,7 @@ Antes de começar, certifique-se de ter os seguintes softwares instalados:
 #### 1 - Clone o repositório:
 
 ```bash
-  https://github.com/rodrigoSilva23/ufba-trabalho1-front-end.git
+ git clone https://github.com/rodrigoSilva23/ufba-trabalho1-front-end.git
   cd ufba-trabalho1-front-end
 ```
 #### 2 - Instale as dependências do projeto:

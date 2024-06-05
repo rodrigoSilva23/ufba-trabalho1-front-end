@@ -42,7 +42,7 @@ This project aims to provide learning and practice with the Angular framework.
 #### 1 - Clone the repository:
 
 ```bash
-  https://github.com/rodrigoSilva23/ufba-trabalho1-front-end.git
+  git clone https://github.com/rodrigoSilva23/ufba-trabalho1-front-end.git
   cd ufba-trabalho1-front-end
 ```
 #### 2 - Install project dependencies:
