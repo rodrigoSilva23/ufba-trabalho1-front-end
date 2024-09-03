@@ -8,11 +8,12 @@ interface CepResponse {
   complemento: string;
   ddd: number;
   gia: string;
-  ibge: number;
+  ibge: number | string;
   localidade: string;
   logradouro: string;
   siafi: number;
   uf: string;
+ 
 }
 @Injectable({
   providedIn: 'root',

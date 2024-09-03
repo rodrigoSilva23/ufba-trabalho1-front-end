@@ -36,7 +36,19 @@
             <a class="nav-link" (click)="signOut()" href="">Sair</a>
           </li>
         </ul>
+        <div class="container-theme-button">
+        
+          <mat-slide-toggle
+          class="thema-button"
+          color="primary"
+         
+          (change)="toggleTheme()"
+          
+         >
+      </mat-slide-toggle>
+        </div>
       </div>
+      
     </div>
   </nav>
 </header>

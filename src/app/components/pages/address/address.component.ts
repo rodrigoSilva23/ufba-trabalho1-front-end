@@ -94,7 +94,7 @@ export class AddressComponent implements OnInit {
     block: [''],
     lot: [''],
     complement: [''],
-    cityId: [''],
+    cityId: ['', Validators.required],
     stateId: ['', Validators.required],
     isMainAddress: [false, Validators.required],
   });
@@ -104,6 +104,7 @@ export class AddressComponent implements OnInit {
     this.isSubmit = true;
     if (isFormValid) {
       const requestData = this.form.value;
+    
       if (this.form.value.id) {
         this.addressServe.putAddressByUser(requestData).subscribe({
           next: (value) => {
@@ -199,64 +200,56 @@ export class AddressComponent implements OnInit {
 
   getCep(event: Event) {
     const inputValue = (event.target as HTMLInputElement).value;
-
-    this.viaCepService
-      .getCep(inputValue)
+  
+    this.viaCepService.getCep(inputValue)
       .pipe(
         switchMap((valueCep) => {
+          this.form.patchValue({
+            street: valueCep.logradouro,
+            location: valueCep.localidade,
+            neighborhood: valueCep.bairro,
+          });
+  
           return this.dataStates$.pipe(
             switchMap((states) => {
-              this.form.patchValue({
-                street: valueCep.logradouro,
-                location: valueCep.localidade,
-                neighborhood: valueCep.bairro,
-              });
               const matchingState = states.find(
-                (state) =>
-                  state.abbreviation.toLowerCase() === valueCep.uf.toLowerCase()
+                (state) => state.abbreviation.toLowerCase() === valueCep.uf.toLowerCase()
               );
-
+  
               if (matchingState) {
                 this.form.patchValue({
                   stateId: matchingState.id.toString(),
                 });
-                this.dataCities$ = this.addressServe.getAllCitieyByState(
-                  matchingState.id
-                );
-
+                this.dataCities$ = this.addressServe.getAllCitieyByState(matchingState.id);
+                return this.dataCities$;
+              } else {
+                // Retorne um observable vazio se não houver estado correspondente
+                return of([]);
               }
-
-              return this.dataCities$;
+            }),
+            map((cities) => {
+              return { cities, valueCep };
             })
           );
         })
       )
       .subscribe({
-        next: (valueCep) => {
-          console.log(valueCep);
-          this.dataCities$.subscribe((cities) => {
-            /*const matchingCity = cities.find(
-              (city) =>
-                city.name.toLowerCase() === valueCep?.localidade.toLowerCase()
-            );
-
-            if (matchingCity) {
-              // Verifique se o controle 'cityId' existe
-              if (this.form.controls['cityId']) {
-                this.form.controls['cityId'].setValue(
-                  matchingCity.id.toString()
-                );
-                console.log(matchingCity.id.toString());
-              }
-            }*/
-          });
+        next: ({ cities, valueCep }) => {
+          const matchingCity = cities.find(
+            (city) => city?.ibgeCode === valueCep?.ibge
+          );
+  
+          if (matchingCity && this.form.controls['cityId']) {
+            this.form.controls['cityId'].setValue(matchingCity.id.toString());
+    
+          }
         },
         error: (err) => {
           console.error('Erro ao processar CEP:', err);
         },
       });
   }
-  openDialog(address?: AddressResponse) {
+    openDialog(address?: AddressResponse) {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         title: 'Deletar',

@@ -11,6 +11,8 @@ export interface StateResponse {
   id: number;
   name: string;
   abbreviation: string;
+  ibgeCode?: string;
+  
 }
 @Injectable({
   providedIn: 'root',
