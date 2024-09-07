@@ -26,29 +26,40 @@
               >Home</a
             >
           </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/endereco" routerLinkActive="active"
-              >Endereço</a
-            >
-          </li>
+          @if (role == "ADMIN") {
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/endereco" routerLinkActive="active"
+                  >Endereço</a
+                >
+              </li>
+
+            }
+            @if (role == "ADMIN" || role == "USER") {
+              <li class="nav-item" >
+                <a class="nav-link" routerLink="/pokemon" routerLinkActive="active"
+                  >Pokemon</a
+                >
+              </li>
+
+            }
 
           <li class="nav-item">
             <a class="nav-link" (click)="signOut()" href="">Sair</a>
           </li>
         </ul>
         <div class="container-theme-button">
-        
+
           <mat-slide-toggle
           class="thema-button"
           color="primary"
-         
+
           (change)="toggleTheme()"
-          
+
          >
       </mat-slide-toggle>
         </div>
       </div>
-      
+
     </div>
   </nav>
 </header>

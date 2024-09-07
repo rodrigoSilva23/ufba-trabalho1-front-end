@@ -20,6 +20,9 @@ export const HandlerErrorsInterceptor: HttpInterceptorFn = (req, next) => {
           case 404:
             console.error('Not found:', err);
             break;
+            case 409:
+              console.error(err.message, err);
+              break;
           case 500: default:
             toast.error("Ocorreu um erro. Por favor, tente novamente!")
             break;

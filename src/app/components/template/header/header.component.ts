@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import { AuthService } from '../../../services/auth/auth.service';
+import { AuthService, UserRole } from '../../../services/auth/auth.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -12,13 +12,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderComponent {
   constructor(private authService: AuthService) { }
-
+  role?: UserRole =  this.authService.getUserDetail()?.role ;
   signOut() {
       this.authService.signOut();
-  }
+    }
 
-  toggleTheme() {
-    console.log('toggleTheme');
+    toggleTheme() {
+
     if(document.body.classList.contains('dark-theme')){
       document.body.classList.remove('dark-theme');
       document.body.classList.add('light-theme');

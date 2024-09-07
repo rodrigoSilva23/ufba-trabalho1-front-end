@@ -1,0 +1,105 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between">
+    <h2>Pokemon Localizados</h2>
+    <button
+      type="button"
+      class="btn btn-success ml-5 new-address"
+      (click)="open(modalContent); type = 'create'"
+    >
+      Novo
+    </button>
+  </div>
+  <hr />
+
+  <h2>Endereços Pokemon Registrados</h2>
+  <app-loading *ngIf="isLoading"></app-loading>
+  <table class="table table-hover table-dark" *ngIf="!isLoading">
+    <thead>
+      <tr>
+        <th>Pokemon</th>
+        <th>Tipo</th>
+        <th>Endereço</th>
+
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <ngb-pagination
+    *ngIf="!isLoading"
+    [collectionSize]="collectionSize"
+    [(page)]="currentPage"
+    [boundaryLinks]="true"
+    [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)"
+  />
+</div>
+
+<ng-template #modalContent let-modal>
+  <main class="wrap-modal">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title">
+        {{ type === "create" ? "Novo Endereço Pokemon" : "Editar Endereço Pokemon" }}
+      </h4>
+      <button
+        type="button"
+        aria-label="Close"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+      >
+        <i class="bi bi-x-circle"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="form" class="row needs-validation">
+        <input type="hidden" formControlName="id" />
+
+        <div class="mb-3 col-5">
+          <label for="cityId" class="form-label">Pokemon</label>
+          <select
+            class="form-select"
+            aria-label="lista de Pokemon"
+
+            [class.invalid]="form.controls.cityId.invalid && isSubmit"
+            (change)="onSelectPokemon($event)"
+            placeholder="Selecione um Pokemon"
+          >
+            <option selected value=""></option>
+            <option [value]="pokemon.url" *ngFor="let pokemon of pokemons$ | async">
+              {{ pokemon.name }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3 col-4">
+          <label for="stateId" class="form-label">Estado</label>
+          <select
+            class="form-select"
+            aria-label="lista de estado"
+            id="stateId"
+            formControlName="stateId"
+            [class.invalid]="form.controls.stateId.invalid && isSubmit"
+            placeholder="Selecione um Estado"
+          >
+            <option selected value=""></option>
+          </select>
+        </div>
+
+        <div class="mb-3 col-12 d-flex justify-content-center" *ngIf="pokemonImage">
+          <img [src]="pokemonImage" alt="Pokemon" width="300" >
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="modal.dismiss()"
+      >
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-save" (click)="onSubmit(modal)">
+        {{ type === "create" ? "Criar" : "Editar" }}
+      </button>
+    </div>
+  </main>
+</ng-template>

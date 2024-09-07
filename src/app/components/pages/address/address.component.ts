@@ -104,7 +104,7 @@ export class AddressComponent implements OnInit {
     this.isSubmit = true;
     if (isFormValid) {
       const requestData = this.form.value;
-    
+
       if (this.form.value.id) {
         this.addressServe.putAddressByUser(requestData).subscribe({
           next: (value) => {
@@ -127,7 +127,7 @@ export class AddressComponent implements OnInit {
         });
       }
       this.form.reset();
-
+      this.isSubmit = false;
       modalRef.dismiss();
     } else {
       this.toastr.error('Preencha todos os campos');
@@ -169,6 +169,7 @@ export class AddressComponent implements OnInit {
     this.type = 'edit';
     this.addressServe.getAddressById(address.id).subscribe({
       next: (value) => {
+
         this.dataCities$ = this.addressServe.getAllCitieyByState(
           value.state.id
         );
@@ -200,7 +201,7 @@ export class AddressComponent implements OnInit {
 
   getCep(event: Event) {
     const inputValue = (event.target as HTMLInputElement).value;
-  
+
     this.viaCepService.getCep(inputValue)
       .pipe(
         switchMap((valueCep) => {
@@ -209,13 +210,13 @@ export class AddressComponent implements OnInit {
             location: valueCep.localidade,
             neighborhood: valueCep.bairro,
           });
-  
+
           return this.dataStates$.pipe(
             switchMap((states) => {
               const matchingState = states.find(
                 (state) => state.abbreviation.toLowerCase() === valueCep.uf.toLowerCase()
               );
-  
+
               if (matchingState) {
                 this.form.patchValue({
                   stateId: matchingState.id.toString(),
@@ -238,10 +239,10 @@ export class AddressComponent implements OnInit {
           const matchingCity = cities.find(
             (city) => city?.ibgeCode === valueCep?.ibge
           );
-  
+
           if (matchingCity && this.form.controls['cityId']) {
             this.form.controls['cityId'].setValue(matchingCity.id.toString());
-    
+
           }
         },
         error: (err) => {

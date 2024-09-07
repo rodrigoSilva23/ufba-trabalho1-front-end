@@ -7,6 +7,7 @@ import { AuthComponent } from './components/pages/auth/auth.component';
 import { LayoutComponent } from './components/template/layout/layout.component';
 import { AddressComponent } from './components/pages/address/address.component';
 import { SignupComponent } from './components/pages/signup/signup.component';
+import { PokemonComponent } from './components/pages/pokemon/pokemon.component';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,13 @@ export const routes: Routes = [
         path: 'endereco',
         title: 'Endereços',
         component: AddressComponent,
+
+      },
+      {
+        path: 'pokemon',
+        title: 'Pokemon',
+        component: PokemonComponent,
+
       },
 
 

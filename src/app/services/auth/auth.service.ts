@@ -10,17 +10,24 @@ import { environment } from '../../../environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { SignUpForm } from '../../types/signup.request.type';
 
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  MANAGER = 'MANAGER'
+}
 interface UserDetails {
   id: number;
   name: string;
   email: string;
-  role: string;
+  role: UserRole;
 }
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   apiUrl: string = environment.apiUrl;
+  private userRoleSubject = new BehaviorSubject<UserRole>(UserRole.USER); // Define um role padrão
+  public userRole$ = this.userRoleSubject.asObservable();
 
   constructor(
     private router: Router,
