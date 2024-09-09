@@ -33,6 +33,18 @@ export class AddressService {
     );
   }
 
+  getAllAddress() {
+    return this.httpClient.get<Pagination<AddressResponse>>(
+      `${this.apiUrl}/address`
+    );
+  }
+  getTotalAddress(): Observable<Number> {
+    return this.httpClient.get<Number>(
+      `${this.apiUrl}/address/${this.userId}/count`
+    );
+  }
+
+
   getAddressById(id: number ) {
     return this.httpClient.get<AddressResponse>(
 

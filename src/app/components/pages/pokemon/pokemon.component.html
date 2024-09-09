@@ -70,17 +70,20 @@
             </option>
           </select>
         </div>
-        <div class="mb-3 col-4">
-          <label for="stateId" class="form-label">Estado</label>
+        <div class="mb-3 col-12">
+          <label for="locateId" class="form-label">localização</label>
           <select
             class="form-select"
-            aria-label="lista de estado"
-            id="stateId"
-            formControlName="stateId"
+            aria-label="localização"
+            id="locateId"
+            formControlName="locateId"
             [class.invalid]="form.controls.stateId.invalid && isSubmit"
-            placeholder="Selecione um Estado"
+            placeholder="Selecione uma localização"
           >
             <option selected value=""></option>
+            <option [value]="locate.id" *ngFor="let locate of (addresses$ | async)">
+              {{ locate?.city?.name }} - {{ locate?.state?.name }}  - {{ locate?.neighborhood }}
+            </option>
           </select>
         </div>
 

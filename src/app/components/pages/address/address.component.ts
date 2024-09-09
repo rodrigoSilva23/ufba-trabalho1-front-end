@@ -20,6 +20,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../../dialog/dialog.component';
 import { LoadingComponent } from '../../loading/loading.component';
 import { OnlyNumbersDirective } from '../../../directives/only-numbers/only-numbers.directive';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @Component({
   selector: 'app-endereco',
@@ -30,6 +33,9 @@ import { OnlyNumbersDirective } from '../../../directives/only-numbers/only-numb
     ReactiveFormsModule,
     DialogComponent,
     LoadingComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatBadgeModule
   ],
   providers: [OnlyNumbersDirective],
   templateUrl: './address.component.html',
@@ -41,7 +47,7 @@ export class AddressComponent implements OnInit {
   pageSize = 5;
   addresses$ = new Observable<AddressResponse[]>();
   type = 'create';
-
+  totalAddress: number = 0;
   dataStates$ = new Observable<StateResponse[]>();
   dataCities$ = new Observable<StateResponse[]>();
   addressIdDelete: string = '';
@@ -60,6 +66,7 @@ export class AddressComponent implements OnInit {
 
   ngOnInit(): void {
     this.listAllAddressByUser();
+    this.totalAddressFunction();
   }
 
   listAllAddressByUser() {
@@ -74,7 +81,16 @@ export class AddressComponent implements OnInit {
       );
     this.addresses$.subscribe(() => (this.isLoading = false));
   }
-
+  totalAddressFunction() {
+   
+    this.addressServe.getTotalAddress().subscribe({
+      next: (value) => {
+        console.log(value);
+        this.totalAddress = Number(value); ;
+      },
+    })
+    
+  }
   onPageChange(page: number) {
     this.currentPage = page;
     this.listAllAddressByUser();
@@ -88,7 +104,7 @@ export class AddressComponent implements OnInit {
     ],
     street: ['', Validators.required],
     location: ['', Validators.required],
-    locationType: [''],
+    locationType: ['',Validators.required],
     neighborhood: ['', Validators.required],
     number: ['', Validators.required],
     block: [''],
@@ -129,6 +145,7 @@ export class AddressComponent implements OnInit {
       this.form.reset();
       this.isSubmit = false;
       modalRef.dismiss();
+      this.totalAddressFunction();
     } else {
       this.toastr.error('Preencha todos os campos');
     }

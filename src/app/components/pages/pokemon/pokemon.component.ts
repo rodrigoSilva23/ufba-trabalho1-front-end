@@ -11,7 +11,9 @@ import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { LoadingComponent } from '../../loading/loading.component';
 import { PokemonApiService } from '../../../services/pokemon-api/pokemon-api.service';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { AddressService } from '../../../services/address/address.service';
+import { AddressResponse } from '../../../types/address.response.type';
 
 @Component({
   selector: 'app-pokemon',
@@ -31,6 +33,7 @@ export class PokemonComponent {
   collectionSize = 1;
   pageSize = 5;
   pokemons$ = new Observable<any>();
+  addresses$ = new Observable<AddressResponse[]>();
   type = 'create';
   pokemonImage = '';
   addressIdDelete: string = '';
@@ -43,11 +46,12 @@ export class PokemonComponent {
     private formBuilderService: NonNullableFormBuilder,
     public dialog: MatDialog,
     private modalService: NgbModal,
-    private pokemonApiService: PokemonApiService
+    private pokemonApiService: PokemonApiService,
+    private addressServe: AddressService,
   ) {}
 
   ngOnInit(): void {
-
+    this.listAllAddressByUser();
     this.pokemons$  = this.pokemonApiService.getAllPokemon();
   }
 
@@ -177,5 +181,18 @@ export class PokemonComponent {
       }
     });
   }*/
+ 
+}
+listAllAddressByUser() {
+  this.isLoading = true;
+  this.addresses$ = this.addressServe
+    .getAllAddressByUser(this.currentPage - 1, this.pageSize)
+    .pipe(
+      map((pagination) => {
+        this.collectionSize = pagination.totalElements;
+        return pagination.content;
+      })
+    );
+  this.addresses$.subscribe(() => (this.isLoading = false));
 }
 }
